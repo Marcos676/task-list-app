@@ -1,5 +1,4 @@
 import React from 'react';
-import './Modal.css';
 
 const Modal = ({ isOpen, onClose, children }) => {
     if (!isOpen) return null;
@@ -8,9 +7,21 @@ const Modal = ({ isOpen, onClose, children }) => {
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={e => e.stopPropagation()}>
                 <button className="modal-close" onClick={onClose}>
-                    &times;
+                    &times; 
                 </button>
-                {children}
+                <h1> { children.title } </h1>
+                <p> { children.legend } </p>
+                {children.inputs.map((input, index) => (
+                    <div key={index}>
+                        <label>{input.label}</label>
+                        <input type={input.type} name={input.name} value={input.value} />
+                    </div>
+                ))}
+                {children.buttons.map((button, index) => (
+                    <button key={index} onClick={button.onClick}>
+                        {button.label}
+                    </button>
+                ))}
             </div>
         </div>
     );
