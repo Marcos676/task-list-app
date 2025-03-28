@@ -1,62 +1,86 @@
-import './App.css';
-import Column from './components/Column';
-import Card from './components/Card';
-import Modal from './components/Modal';
+import "./App.css";
+import Column from "./components/Column";
+import Modal from "./components/Modal";
 
-import { useState } from 'react';
+import { useState } from "react";
 
 function App() {
   const [isOpenModal, setIsOpenModal] = useState(false);
-  
+  const [cards, setCards] = useState([]);
 
-  let cards =<Card title="Card title" description="Card description" />;
+  let lists = [
+    { name: "To do", cards: [], backgroundColor: "bc-red" },
+    { name: "In progress", cards: [], backgroundColor: "bc-blue" },
+    { name: "Done", cards: [], backgroundColor: "bc-brown" },
+  ];
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    let newCards = [
+      ...cards,
+      {
+        title: e.target.elements[1].value,
+        description: e.target.elements[2].value,
+        status: "To do",
+      },
+    ];
+    setCards(newCards);
+    console.log(cards);
+    setIsOpenModal(false);
+  };
+
   let createFields = {
     title: "Modal title",
     legend: "description modal",
     inputs: [
       {
-        label: "campo 1",
+        tag: "input",
+        label: "Titulo",
         type: "text",
         name: "title",
-        value: "Card title"
+        placeholder: "Card title",
       },
       {
-        label: "campo 2",
+        tag: "textarea",
+        label: "Descripción",
         type: "text",
         name: "description",
-        value: "Card description"
-      }
+        placeholder: "Card description",
+      },
     ],
     buttons: [
       {
         label: "Guardar",
-        onClick: () => console.log('save')
+        onClick: () => console.log("Guardar"),
+        type: "submit",
       },
       {
         label: "Cancelar",
-        onClick: () => console.log('cancel')
-      }
-    ]
+        onClick: () => setIsOpenModal(false),
+        type: "button",
+      },
+    ],
   };
 
   return (
     <div className="App">
-      <header className="App-header">
-        Mi Lista de tareas
-      </header>
+      <header className="App-header">Mi Lista de tareas</header>
       <main>
-        <Column title="To do" childrens={cards}>
-          
-        </Column>
-        <Column title="In progress" childrens={cards}>
-          <Card title="Card title" description="Card description" />
-          <Card title="Card title" description="Card description" />
-        </Column>
-        <Column title="Done" childrens={cards}>
-          <Card title="Card title" description="Card description" />
-        </Column>
+        {lists.map((list, index) => (
+          <Column
+            key={index}
+            title={list.name}
+            childrens={cards.filter((card) => card.status === list.name)}
+            backgroundColor={list.backgroundColor}
+          />
+        ))}
         <button onClick={() => setIsOpenModal(true)}>Crear tarjeta</button>
-        <Modal isOpen={isOpenModal} onClose={() => setIsOpenModal(false)} children={createFields} />
+        <Modal
+          isOpen={isOpenModal}
+          onClose={() => setIsOpenModal(false)}
+          children={createFields}
+          submit={handleSubmit}
+        />
       </main>
     </div>
   );
